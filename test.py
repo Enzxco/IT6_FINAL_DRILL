@@ -1,6 +1,7 @@
 import unittest
 from api import app
 
+
 class MyAppTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

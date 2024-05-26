@@ -12,9 +12,11 @@ app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
 
+
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
+
 
 def data_fetch(query):
     cur = mysql.connection.cursor()
@@ -23,18 +25,21 @@ def data_fetch(query):
     cur.close()
     return data
 
+
 @app.route("/mydb", methods=["GET"])
-def get_actors():
+def get_mydb():
     query = """
     select * from budget
     """
     data = data_fetch("""select * from budget""")
     return make_response(jsonify(data), 200)
 
+
 @app.route("/mydb/<int:id>", methods=["GET"])
 def get_mydb_by_id(id):
     data = data_fetch("""select * from budget where idBUDGET = {}""".format(id))
     return make_response(jsonify(data), 200)
+
 
 @app.route("/mydb/<int:id>/details", methods=["GET"])
 def get_details_by_mydb(id):
@@ -47,12 +52,17 @@ def get_details_by_mydb(id):
     INNER JOIN student
     ON staff.idSTAFFS = student.idSTUDENTS
     WHERE budget.idBUDGET = {};
-    """.format(id))
+    """.format(
+            id
+        )
+    )
     return make_response(
-        jsonify({"idBUDGET": id, "count": len(data), "details": data}), 200)
+        jsonify({"idBUDGET": id, "count": len(data), "details": data}), 200
+    )
 
-@app.route("/actors", methods=["POST"])
-def add_actor():
+
+@app.route("/mydb", methods=["POST"])
+def add_mydb():
     cur = mysql.connection.cursor()
     info = request.get_json()
     idBUDGET = info["idBUDGET"]
@@ -66,10 +76,30 @@ def add_actor():
     rows_affected = cur.rowcount
     cur.close()
     return make_response(
-        jsonify(
-            {"message": "actor added successfully", "rows_affected": rows_affected}
-        ),
+        jsonify({"message": "mydb added successfully", "rows_affected": rows_affected}),
         201,
+    )
+
+
+@app.route("/mydb/<int:id>", methods=["PUT"])
+def update_mydb(id):
+    cur = mysql.connection.cursor()
+    info = request.get_json()
+    name = info["name"]
+    job_title = info["job_title"]
+    contact_details = info["contact_details"]
+    cur.execute(
+        """ UPDATE staff SET name = %s, job_title = %s, contact_details = %s WHERE idSTAFFS = %s """,
+        (name, job_title, contact_details, id),
+    )
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify(
+            {"message": "mydb updated successfully", "rows_affected": rows_affected}
+        ),
+        200,
     )
 
 
