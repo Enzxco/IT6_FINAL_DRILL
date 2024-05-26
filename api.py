@@ -81,7 +81,7 @@ def add_mydb():
     )
 
 
-@app.route("/mydb/<int:id>", methods=["PUT"])
+@app.route("/staff/<int:id>", methods=["PUT"])
 def update_mydb(id):
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -98,6 +98,21 @@ def update_mydb(id):
     return make_response(
         jsonify(
             {"message": "mydb updated successfully", "rows_affected": rows_affected}
+        ),
+        200,
+    )
+
+
+@app.route("/budget/<int:id>", methods=["DELETE"])
+def delete_mydb(id):
+    cur = mysql.connection.cursor()
+    cur.execute(""" DELETE FROM budget where idBUDGET = %s """, (id,))
+    mysql.connection.commit()
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify(
+            {"message": "mydb deleted successfully", "rows_affected": rows_affected}
         ),
         200,
     )
