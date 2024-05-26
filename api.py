@@ -26,7 +26,7 @@ def data_fetch(query):
     return data
 
 
-@app.route("/mydb", methods=["GET"])
+@app.route("/budget", methods=["GET"])
 def get_mydb():
     query = """
     select * from budget
@@ -41,7 +41,7 @@ def get_mydb_by_id(id):
     return make_response(jsonify(data), 200)
 
 
-@app.route("/mydb/<int:id>/details", methods=["GET"])
+@app.route("/staff/<int:id>/details", methods=["GET"])
 def get_details_by_mydb(id):
     data = data_fetch(
         """
@@ -61,7 +61,7 @@ def get_details_by_mydb(id):
     )
 
 
-@app.route("/mydb", methods=["POST"])
+@app.route("/budget", methods=["POST"])
 def add_mydb():
     cur = mysql.connection.cursor()
     info = request.get_json()
@@ -81,16 +81,15 @@ def add_mydb():
     )
 
 
-@app.route("/staff/<int:id>", methods=["PUT"])
+@app.route("/budget/<int:id>", methods=["PUT"])
 def update_mydb(id):
     cur = mysql.connection.cursor()
     info = request.get_json()
-    name = info["name"]
-    job_title = info["job_title"]
-    contact_details = info["contact_details"]
+    idBUDGET = info["idBUDGET"]
+    annual_allocated = info["annual_allocated"]
     cur.execute(
-        """ UPDATE staff SET name = %s, job_title = %s, contact_details = %s WHERE idSTAFFS = %s """,
-        (name, job_title, contact_details, id),
+        """ UPDATE budget SET annual_allocated = %s WHERE idBUDGET = %s """,
+        (annual_allocated, idBUDGET),
     )
     mysql.connection.commit()
     rows_affected = cur.rowcount
@@ -116,6 +115,12 @@ def delete_mydb(id):
         ),
         200,
     )
+
+@app.route("/mydb/format", methods=["GET"])
+def get_params():
+    fmt = request.args.get('id')
+    foo = request.args.get('aaaa')
+    return make_response(jsonify({"format":fmt, "foo":foo}),200)
 
 
 if __name__ == "__main__":
