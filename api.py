@@ -1,4 +1,4 @@
-from flask import Flask, make_response, jsonify
+from flask import Flask, make_response, jsonify, request
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
@@ -46,10 +46,31 @@ def get_details_by_mydb(id):
     ON budget.idBUDGET = staff.idSTAFFS
     INNER JOIN student
     ON staff.idSTAFFS = student.idSTUDENTS
-    WHERE budget.idBUDGET IN (10, 11, 12, 13, 14, 15);
+    WHERE budget.idBUDGET = {};
     """.format(id))
     return make_response(
         jsonify({"idBUDGET": id, "count": len(data), "details": data}), 200)
+
+@app.route("/actors", methods=["POST"])
+def add_actor():
+    cur = mysql.connection.cursor()
+    info = request.get_json()
+    idBUDGET = info["idBUDGET"]
+    annual_allocated = info["annual_allocated"]
+    cur.execute(
+        """ INSERT INTO budget (idBUDGET, annual_allocated) VALUE (%s, %s)""",
+        (idBUDGET, annual_allocated),
+    )
+    mysql.connection.commit()
+    print("row(s) affected :{}".format(cur.rowcount))
+    rows_affected = cur.rowcount
+    cur.close()
+    return make_response(
+        jsonify(
+            {"message": "actor added successfully", "rows_affected": rows_affected}
+        ),
+        201,
+    )
 
 
 if __name__ == "__main__":
