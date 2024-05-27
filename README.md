@@ -93,7 +93,6 @@ python app.py
   "idBUDGET": 21,
   "annual_allocated": 95000
 }
-
 ```
 Example reponse: (applied to all)
 ```
@@ -101,7 +100,6 @@ Example reponse: (applied to all)
   "message": "mydb added successfully",
   "rows_affected": 1
 }
-
 ```
 
 6. Update Budget
@@ -125,7 +123,6 @@ Example reponse: (applied to all)
   "message": "mydb deleted successfully",
   "rows_affected": 1
 }
-
 ```
 
 8. Get Params
